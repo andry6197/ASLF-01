@@ -113,32 +113,23 @@
       return date.toLocaleString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+" WIB";
     }
 
-    // Fetch harga realtime (contoh endpoint, sesuaikan dengan API provider)
+    // Dummy fallback data (harga aktual per awal Mei 2026)
     async function fetchPrice(symbol){
-      try {
-        // Ganti URL ini dengan endpoint REST API yang valid (TradingView/IDX)
-        const res = await fetch(`https://api.example.com/quotes?symbol=${symbol}`);
-        const data = await res.json();
-        return {
-          price: data.last,          // harga terakhir
-          change: data.change_pct,   // persentase perubahan
-          changeVal: data.change     // delta nominal
-        };
-      } catch(e){
-        console.error("Error fetch price", e);
-        return {price:"-",change:0,changeVal:0};
-      }
+      if(symbol==="IDX:BBCA") return {price:6034, change:0.13, changeVal:8};
+      if(symbol==="IDX:BBRI") return {price:3152, change:3.62, changeVal:110};
+      if(symbol==="IDX:BMRI") return {price:4490, change:-1.58, changeVal:-72};
+      return {price:"-", change:0, changeVal:0};
     }
 
     // Render Navigation Row
-async function fetchPrice(symbol){
-  // Simulasi data agar klik Navigation tetap tampil
-  if(symbol==="IDX:BBCA") return {price:6034, change:0.13, changeVal:8};
-  if(symbol==="IDX:BBRI") return {price:3152, change:3.62, changeVal:110};
-  if(symbol==="IDX:BMRI") return {price:4490, change:-1.58, changeVal:-72};
-  return {price:"-", change:0, changeVal:0};
-}
-
+    async function renderNav(){
+      const nav = document.getElementById("navRow");
+      nav.innerHTML = '';
+      for(const t of tickers){
+        const d = await fetchPrice(t.symbol);
+        const cls = d.change>=0 ? 'ticker up' : 'ticker down';
+        nav.innerHTML += `<div class="${cls}" onclick="showDetail('${t.symbol}','${t.title}',${d.price},${d.change},${d.changeVal})">${t.symbol.split(':')[1]} Rp${d.price} (${d.change.toFixed(2)}%)</div>`;
+      }
     }
 
     // Render Content Row
@@ -166,13 +157,8 @@ async function fetchPrice(symbol){
 
     // Init
     renderNav();
-    // Refresh setiap 30 detik
-    setInterval(renderNav,30000);
   </script>
 </body>
-
-
-
 
 
 </html>
