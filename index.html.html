@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<link rel="manifest" href="manifest.json">
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js");
+  }
+</script>
+
+  <!-- Version Revision: 01.2026.00 -->
+  <meta charset="UTF-8">
+  <title>ASL Financial</title>
+  <style>
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      margin:0;
+      background:#fff;
+      color:#000;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark { background:#121212; color:#eee; }
+
+    /* Title Row */
+    .title-bar {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:12px 20px; border-bottom:1px solid #ddd;
+      background:#f9f9f9;
+    }
+    .title-left { font-size:20px; }
+    .title-left span.bold { font-weight:700; }
+    .title-left span.regular { font-weight:400; margin-left:4px; }
+    .beta {
+      font-size:12px; color:#888; margin-left:8px;
+      border:1px solid #ccc; padding:2px 6px; border-radius:4px;
+    }
+    .toggle-switch { position:relative; width:50px; height:24px; }
+    .toggle-switch input { display:none; }
+    .slider {
+      position:absolute; cursor:pointer;
+      top:0; left:0; right:0; bottom:0;
+      background:#ccc; transition:.4s; border-radius:24px;
+    }
+    .slider:before {
+      position:absolute; content:"";
+      height:18px; width:18px; left:3px; bottom:3px;
+      background:white; transition:.4s; border-radius:50%;
+    }
+    input:checked + .slider { background:#0077cc; }
+    input:checked + .slider:before { transform:translateX(26px); }
+
+    /* Navigation Row */
+    .summary-bar {
+      display:flex; overflow-x:auto;
+      background:#fff; padding:10px 20px;
+      border-bottom:1px solid #eee;
+    }
+    .ticker {
+      margin:0 12px; cursor:pointer;
+      font-weight:500; white-space:nowrap;
+    }
+    .ticker.up { color:#0a0; }
+    .ticker.down { color:#d00; }
+
+    /* Content Row */
+    .detail { padding:20px; }
+    iframe { width:100%; height:320px; border:none; }
+    @media(max-width:600px){ iframe{height:240px;} }
+  </style>
+</head>
+<body>
+  <!-- Title Row -->
+  <div class="title-bar">
+    <div class="title-left">
+      <span class="bold">ASL</span><span class="regular">Financial</span>
+      <span class="beta">Beta</span>
+    </div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="themeToggle">
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <!-- Navigation Row -->
+  <div class="summary-bar">
+    <div class="ticker up" onclick="showDetail('BBCA')">BBCA Rp6,050 (+2.54%)</div>
+    <div class="ticker up" onclick="showDetail('BBRI')">BBRI Rp5,100 (+1.20%)</div>
+    <div class="ticker up" onclick="showDetail('BMRI')">BMRI Rp5,800 (+0.85%)</div>
+    <div class="ticker up" onclick="showDetail('BBNI')">BBNI Rp9,200 (+0.40%)</div>
+    <div class="ticker down" onclick="showDetail('ITMG')">ITMG Rp22,500 (-0.75%)</div>
+    <div class="ticker down" onclick="showDetail('PTBA')">PTBA Rp3,200 (-1.10%)</div>
+    <div class="ticker up" onclick="showDetail('PANI')">PANI Rp1,250 (+0.60%)</div>
+  </div>
+
+  <!-- Content Row -->
+  <div class="detail" id="detail">
+    <h2>Select a ticker</h2>
+    <p>Click on a ticker above to view full summary.</p>
+  </div>
+
+  <script>
+    const tickers = {
+      BBCA:{title:"Bank Central Asia Tbk PT",symbol:"IDX:BBCA",fundamental:`Prev Close: Rp5,900<br>Open: Rp5,900<br>High: Rp6,075<br>Low: Rp5,875<br>Volume: 86.34M<br>Dividend: 5.53%<br>P/E Ratio: 12.88`},
+      BBRI:{title:"Bank Rakyat Indonesia",symbol:"IDX:BBRI",fundamental:`Prev Close: Rp5,040<br>Open: Rp5,050<br>High: Rp5,120<br>Low: Rp5,000<br>Volume: 120M<br>Dividend: 4.8%<br>P/E Ratio: 11.5`},
+      BMRI:{title:"Bank Mandiri",symbol:"IDX:BMRI",fundamental:`Prev Close: Rp5,750<br>Open: Rp5,760<br>High: Rp5,820<br>Low: Rp5,740<br>Volume: 95M<br>Dividend: 5.1%<br>P/E Ratio: 12.2`},
+      BBNI:{title:"Bank Negara Indonesia",symbol:"IDX:BBNI",fundamental:`Prev Close: Rp9,160<br>Open: Rp9,180<br>High: Rp9,220<br>Low: Rp9,150<br>Volume: 60M<br>Dividend: 4.5%<br>P/E Ratio: 10.9`},
+      ITMG:{title:"Indo Tambangraya Megah",symbol:"IDX:ITMG",fundamental:`Prev Close: Rp22,670<br>Open: Rp22,600<br>High: Rp22,700<br>Low: Rp22,400<br>Volume: 15M<br>Dividend: 7.2%<br>P/E Ratio: 8.5`},
+      PTBA:{title:"Bukit Asam",symbol:"IDX:PTBA",fundamental:`Prev Close: Rp3,235<br>Open: Rp3,210<br>High: Rp3,250<br>Low: Rp3,180<br>Volume: 30M<br>Dividend: 6.0%<br>P/E Ratio: 9.8`},
+      PANI:{title:"Pantai Indah Kapuk Dua",symbol:"IDX:PANI",fundamental:`Prev Close: Rp1,242<br>Open: Rp1,245<br>High: Rp1,255<br>Low: Rp1,240<br>Volume: 12M<br>Dividend: 2.5%<br>P/E Ratio: 15.0`}
+    };
+
+    function showDetail(t){
+      const d = tickers[t];
+      if(!d) return;
+      document.getElementById("detail").innerHTML = `
+        <h2>${d.title}</h2>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${d.symbol}&interval=D&theme=${document.body.classList.contains('dark')?'dark':'light'}"></iframe>
+        <p>${d.fundamental}</p>
+      `;
+    }
+
+    // Toggle Light/Dark
+    document.getElementById("themeToggle").addEventListener("change", function(){
+      if(this.checked){
+        document.body.classList.add("dark");
+      } else {
+        document.body.classList.remove("dark");
+      }
+      // reload chart if visible
+      const iframe = document.querySelector("#detail iframe");
+      if(iframe){
+        const currentTicker = Object.keys(tickers).find(t => iframe.src.includes(tickers[t].symbol));
+        if(currentTicker){
+          showDetail(currentTicker);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
