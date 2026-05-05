@@ -131,14 +131,14 @@
     }
 
     // Render Navigation Row
-    async function renderNav(){
-      const nav = document.getElementById("navRow");
-      nav.innerHTML = '';
-      for(const t of tickers){
-        const d = await fetchPrice(t.symbol);
-        const cls = d.change>=0 ? 'ticker up' : 'ticker down';
-        nav.innerHTML += `<div class="${cls}" onclick="showDetail('${t.symbol}','${t.title}',${d.price},${d.change},${d.changeVal})">${t.symbol.split(':')[1]} Rp${d.price} (${d.change.toFixed(2)}%)</div>`;
-      }
+async function fetchPrice(symbol){
+  // Simulasi data agar klik Navigation tetap tampil
+  if(symbol==="IDX:BBCA") return {price:6034, change:0.13, changeVal:8};
+  if(symbol==="IDX:BBRI") return {price:3152, change:3.62, changeVal:110};
+  if(symbol==="IDX:BMRI") return {price:4490, change:-1.58, changeVal:-72};
+  return {price:"-", change:0, changeVal:0};
+}
+
     }
 
     // Render Content Row
