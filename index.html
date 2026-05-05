@@ -93,21 +93,7 @@
   </div>
 
   <!-- Navigation Row -->
-  <div class="summary-bar">
-    <!-- Mini widgets with valid interval -->
-    <div onclick="showDetail('IDX:BBCA','Bank Central Asia Tbk PT')">
-      <iframe src="https://s.tradingview.com/widgetembed/?symbol=IDX:BBCA&interval=D&theme=light&style=2&locale=en"
-              width="140" height="60" frameborder="0"></iframe>
-    </div>
-    <div onclick="showDetail('IDX:BBRI','Bank Rakyat Indonesia')">
-      <iframe src="https://s.tradingview.com/widgetembed/?symbol=IDX:BBRI&interval=D&theme=light&style=2&locale=en"
-              width="140" height="60" frameborder="0"></iframe>
-    </div>
-    <div onclick="showDetail('IDX:BMRI','Bank Mandiri')">
-      <iframe src="https://s.tradingview.com/widgetembed/?symbol=IDX:BMRI&interval=D&theme=light&style=2&locale=en"
-              width="140" height="60" frameborder="0"></iframe>
-    </div>
-  </div>
+  <div class="summary-bar" id="navRow"></div>
 
   <!-- Content Row -->
   <div class="detail" id="detail">
@@ -116,13 +102,58 @@
   </div>
 
   <script>
-    function showDetail(symbol,title){
-      const theme = document.body.classList.contains('dark') ? 'dark' : 'light';
+    const tickers = [
+      {symbol:"IDX:BBCA", title:"Bank Central Asia Tbk PT"},
+      {symbol:"IDX:BBRI", title:"Bank Rakyat Indonesia"},
+      {symbol:"IDX:BMRI", title:"Bank Mandiri"}
+    ];
+
+    // Format waktu
+    function formatTime(date){
+      return date.toLocaleString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+" WIB";
+    }
+
+    // Fetch harga realtime (contoh endpoint, sesuaikan dengan API provider)
+    async function fetchPrice(symbol){
+      try {
+        // Ganti URL ini dengan endpoint REST API yang valid (TradingView/IDX)
+        const res = await fetch(`https://api.example.com/quotes?symbol=${symbol}`);
+        const data = await res.json();
+        return {
+          price: data.last,          // harga terakhir
+          change: data.change_pct,   // persentase perubahan
+          changeVal: data.change     // delta nominal
+        };
+      } catch(e){
+        console.error("Error fetch price", e);
+        return {price:"-",change:0,changeVal:0};
+      }
+    }
+
+    // Render Navigation Row
+    async function renderNav(){
+      const nav = document.getElementById("navRow");
+      nav.innerHTML = '';
+      for(const t of tickers){
+        const d = await fetchPrice(t.symbol);
+        const cls = d.change>=0 ? 'ticker up' : 'ticker down';
+        nav.innerHTML += `<div class="${cls}" onclick="showDetail('${t.symbol}','${t.title}',${d.price},${d.change},${d.changeVal})">${t.symbol.split(':')[1]} Rp${d.price} (${d.change.toFixed(2)}%)</div>`;
+      }
+    }
+
+    // Render Content Row
+    function showDetail(symbol,title,price,change,changeVal){
+      const changeClass = change>=0 ? 'price-change-up' : 'price-change-down';
       const now = new Date();
       document.getElementById("detail").innerHTML = `
         <h2>${title}</h2>
-        <div class="meta">${now.toLocaleString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'})} WIB</div>
-        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=${theme}&style=1&locale=en"
+        <div class="price-box">
+          Rp${price}
+          <span class="${changeClass}">${change.toFixed(2)}% (${changeVal})</span>
+          <span class="currency">IDR</span>
+        </div>
+        <div class="meta">${formatTime(now)}</div>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=${document.body.classList.contains('dark')?'dark':'light'}&style=1&locale=en"
                 width="100%" height="420" frameborder="0"></iframe>
       `;
     }
@@ -132,8 +163,14 @@
       if(this.checked){ document.body.classList.add("dark"); }
       else { document.body.classList.remove("dark"); }
     });
+
+    // Init
+    renderNav();
+    // Refresh setiap 30 detik
+    setInterval(renderNav,30000);
   </script>
 </body>
+
 
 
 
