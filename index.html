@@ -102,54 +102,69 @@
   </div>
 
   <script>
-    const tickers = [
-      {symbol:"IDX:BBCA", title:"Bank Central Asia Tbk PT"},
-      {symbol:"IDX:BBRI", title:"Bank Rakyat Indonesia"},
-      {symbol:"IDX:BMRI", title:"Bank Mandiri"}
-    ];
+    const tickers = {
+      "IDX:BBCA": {
+        title:"Bank Central Asia Tbk PT",
+        price:6034, change:0.13, changeVal:8,
+        fundamentals:{
+          "Prev Close":"Rp5,900","Open":"Rp5,900","High":"Rp6,075","Low":"Rp5,875",
+          "Market Cap":"732.25T","Volume":"127.58M","Dividend":"5.58%","P/E Ratio":"12.78"
+        }
+      },
+      "IDX:BBRI": {
+        title:"Bank Rakyat Indonesia",
+        price:3152, change:3.62, changeVal:110,
+        fundamentals:{
+          "Prev Close":"Rp3,042","Open":"Rp3,050","High":"Rp3,180","Low":"Rp3,020",
+          "Market Cap":"600T","Volume":"120M","Dividend":"4.8%","P/E Ratio":"11.5"
+        }
+      },
+      "IDX:BMRI": {
+        title:"Bank Mandiri",
+        price:4490, change:-1.58, changeVal:-72,
+        fundamentals:{
+          "Prev Close":"Rp4,562","Open":"Rp4,570","High":"Rp4,600","Low":"Rp4,450",
+          "Market Cap":"700T","Volume":"95M","Dividend":"5.1%","P/E Ratio":"12.2"
+        }
+      }
+    };
 
-    // Format waktu
     function formatTime(date){
       return date.toLocaleString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+" WIB";
     }
 
-    // Dummy fallback data (harga aktual per awal Mei 2026)
-    async function fetchPrice(symbol){
-      if(symbol==="IDX:BBCA") return {price:6034, change:0.13, changeVal:8};
-      if(symbol==="IDX:BBRI") return {price:3152, change:3.62, changeVal:110};
-      if(symbol==="IDX:BMRI") return {price:4490, change:-1.58, changeVal:-72};
-      return {price:"-", change:0, changeVal:0};
-    }
-
-    // Render Navigation Row
-    async function renderNav(){
+    function renderNav(){
       const nav = document.getElementById("navRow");
       nav.innerHTML = '';
-      for(const t of tickers){
-        const d = await fetchPrice(t.symbol);
+      for(const [symbol,d] of Object.entries(tickers)){
         const cls = d.change>=0 ? 'ticker up' : 'ticker down';
-        nav.innerHTML += `<div class="${cls}" onclick="showDetail('${t.symbol}','${t.title}',${d.price},${d.change},${d.changeVal})">${t.symbol.split(':')[1]} Rp${d.price} (${d.change.toFixed(2)}%)</div>`;
+        nav.innerHTML += `<div class="${cls}" onclick="showDetail('${symbol}')">${symbol.split(':')[1]} Rp${d.price} (${d.change.toFixed(2)}%)</div>`;
       }
     }
 
-    // Render Content Row
-    function showDetail(symbol,title,price,change,changeVal){
-      const changeClass = change>=0 ? 'price-change-up' : 'price-change-down';
+    function showDetail(symbol){
+      const d = tickers[symbol];
+      const changeClass = d.change>=0 ? 'price-change-up' : 'price-change-down';
       const now = new Date();
+      let fundamentalsHTML = '<div class="fundamentals"><h3>Fundamentals</h3><table>';
+      for(const [key,val] of Object.entries(d.fundamentals)){
+        fundamentalsHTML += `<tr><td>${key}</td><td>${val}</td></tr>`;
+      }
+      fundamentalsHTML += '</table></div>';
       document.getElementById("detail").innerHTML = `
-        <h2>${title}</h2>
+        <h2>${d.title}</h2>
         <div class="price-box">
-          Rp${price}
-          <span class="${changeClass}">${change.toFixed(2)}% (${changeVal})</span>
+          Rp${d.price}
+          <span class="${changeClass}">${d.change.toFixed(2)}% (${d.changeVal})</span>
           <span class="currency">IDR</span>
         </div>
         <div class="meta">${formatTime(now)}</div>
         <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=${document.body.classList.contains('dark')?'dark':'light'}&style=1&locale=en"
                 width="100%" height="420" frameborder="0"></iframe>
+        ${fundamentalsHTML}
       `;
     }
 
-    // Toggle dark/light mode
     document.getElementById("themeToggle").addEventListener("change", function(){
       if(this.checked){ document.body.classList.add("dark"); }
       else { document.body.classList.remove("dark"); }
