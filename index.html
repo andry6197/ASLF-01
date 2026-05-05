@@ -94,13 +94,19 @@
 
   <!-- Navigation Row -->
   <div class="summary-bar">
-    <!-- TradingView Mini Widgets -->
-    <iframe src="https://s.tradingview.com/widgetembed/?symbol=IDX:BBCA&interval=1&theme=light&style=2&locale=en"
-            width="120" height="60" frameborder="0"></iframe>
-    <iframe src="https://s.tradingview.com/widgetembed/?symbol=IDX:BBRI&interval=1&theme=light&style=2&locale=en"
-            width="120" height="60" frameborder="0"></iframe>
-    <iframe src="https://s.tradingview.com/widgetembed/?symbol=IDX:BMRI&interval=1&theme=light&style=2&locale=en"
-            width="120" height="60" frameborder="0"></iframe>
+    <!-- Mini widgets for realtime price -->
+    <div onclick="showDetail('IDX:BBCA','Bank Central Asia Tbk PT')">
+      <iframe src="https://s.tradingview.com/widgetembed/?symbol=IDX:BBCA&interval=1&theme=light&style=2&locale=en"
+              width="140" height="60" frameborder="0"></iframe>
+    </div>
+    <div onclick="showDetail('IDX:BBRI','Bank Rakyat Indonesia')">
+      <iframe src="https://s.tradingview.com/widgetembed/?symbol=IDX:BBRI&interval=1&theme=light&style=2&locale=en"
+              width="140" height="60" frameborder="0"></iframe>
+    </div>
+    <div onclick="showDetail('IDX:BMRI','Bank Mandiri')">
+      <iframe src="https://s.tradingview.com/widgetembed/?symbol=IDX:BMRI&interval=1&theme=light&style=2&locale=en"
+              width="140" height="60" frameborder="0"></iframe>
+    </div>
   </div>
 
   <!-- Content Row -->
@@ -111,21 +117,24 @@
 
   <script>
     function showDetail(symbol,title){
+      const theme = document.body.classList.contains('dark') ? 'dark' : 'light';
+      const now = new Date();
       document.getElementById("detail").innerHTML = `
         <h2>${title}</h2>
-        <!-- TradingView Full Widget -->
-        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=${document.body.classList.contains('dark')?'dark':'light'}&style=1&locale=en"
-                width="100%" height="400" frameborder="0"></iframe>
+        <div class="meta">${now.toLocaleString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'})} WIB</div>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=${theme}&style=1&locale=en"
+                width="100%" height="420" frameborder="0"></iframe>
       `;
     }
 
-    // Dark mode toggle
+    // Toggle dark/light mode
     document.getElementById("themeToggle").addEventListener("change", function(){
       if(this.checked){ document.body.classList.add("dark"); }
       else { document.body.classList.remove("dark"); }
     });
   </script>
 </body>
+
 
 
 
