@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <!-- Version Revision: 01.2026.09 -->
   <meta charset="UTF-8">
@@ -53,3 +55,81 @@
     }
   </style>
 </head>
+
+<body>
+  <h1>My Stock Watchlist</h1>
+  <div class="toggle">
+    <label for="theme">Theme: </label>
+    <select id="theme">
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+      <option value="auto">Auto (OS)</option>
+      <option value="time">Auto (Day/Night)</option>
+    </select>
+  </div>
+  <div class="container">
+    <!-- Column ID -->
+    <div class="column">
+      <div class="card"><h3>BBCA</h3><iframe id="BBCA"></iframe><a href="https://www.tradingview.com/symbols/IDX-BBCA/" target="_blank">Detail</a></div>
+      <div class="card"><h3>BBRI</h3><iframe id="BBRI"></iframe><a href="https://www.tradingview.com/symbols/IDX-BBRI/" target="_blank">Detail</a></div>
+      <div class="card"><h3>BMRI</h3><iframe id="BMRI"></iframe><a href="https://www.tradingview.com/symbols/IDX-BMRI/" target="_blank">Detail</a></div>
+      <div class="card"><h3>BBNI</h3><iframe id="BBNI"></iframe><a href="https://www.tradingview.com/symbols/IDX-BBNI/" target="_blank">Detail</a></div>
+      <div class="card"><h3>ITMG</h3><iframe id="ITMG"></iframe><a href="https://www.tradingview.com/symbols/IDX-ITMG/" target="_blank">Detail</a></div>
+      <div class="card"><h3>PTBA</h3><iframe id="PTBA"></iframe><a href="https://www.tradingview.com/symbols/IDX-PTBA/" target="_blank">Detail</a></div>
+      <div class="card"><h3>PANI</h3><iframe id="PANI"></iframe><a href="https://www.tradingview.com/symbols/IDX-PANI/" target="_blank">Detail</a></div>
+    </div>
+
+    <!-- Column US -->
+    <div class="column">
+      <div class="card"><h3>GOOG</h3><iframe id="GOOG"></iframe><a href="https://www.tradingview.com/symbols/NASDAQ-GOOG/" target="_blank">Detail</a></div>
+      <div class="card"><h3>NVDA</h3><iframe id="NVDA"></iframe><a href="https://www.tradingview.com/symbols/NASDAQ-NVDA/" target="_blank">Detail</a></div>
+      <div class="card"><h3>AAPL</h3><iframe id="AAPL"></iframe><a href="https://www.tradingview.com/symbols/NASDAQ-AAPL/" target="_blank">Detail</a></div>
+      <div class="card"><h3>AMZN</h3><iframe id="AMZN"></iframe><a href="https://www.tradingview.com/symbols/NASDAQ-AMZN/" target="_blank">Detail</a></div>
+      <div class="card"><h3>MSFT</h3><iframe id="MSFT"></iframe><a href="https://www.tradingview.com/symbols/NASDAQ-MSFT/" target="_blank">Detail</a></div>
+      <div class="card"><h3>TSLA</h3><iframe id="TSLA"></iframe><a href="https://www.tradingview.com/symbols/NASDAQ-TSLA/" target="_blank">Detail</a></div>
+      <div class="card"><h3>PLTR</h3><iframe id="PLTR"></iframe><a href="https://www.tradingview.com/symbols/NYSE-PLTR/" target="_blank">Detail</a></div>
+    </div>
+  </div>
+
+  <script>
+    const tickers = {
+      BBCA: "IDX:BBCA", BBRI: "IDX:BBRI", BMRI: "IDX:BMRI", BBNI: "IDX:BBNI",
+      ITMG: "IDX:ITMG", PTBA: "IDX:PTBA", PANI: "IDX:PANI",
+      GOOG: "NASDAQ:GOOG", NVDA: "NASDAQ:NVDA", AAPL: "NASDAQ:AAPL",
+      AMZN: "NASDAQ:AMZN", MSFT: "NASDAQ:MSFT", TSLA: "NASDAQ:TSLA", PLTR: "NYSE:PLTR"
+    };
+
+    function setTheme(theme) {
+      let mode = "light";
+      if (theme === "dark") {
+        document.body.classList.add("dark");
+        mode = "dark";
+      } else if (theme === "light") {
+        document.body.classList.remove("dark");
+        mode = "light";
+      } else if (theme === "auto") {
+        mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.body.classList.toggle("dark", mode === "dark");
+      } else if (theme === "time") {
+        const hour = new Date().getHours();
+        mode = (hour >= 18 || hour < 6) ? "dark" : "light";
+        document.body.classList.toggle("dark", mode === "dark");
+      }
+
+      Object.keys(tickers).forEach(t => {
+        const iframe = document.getElementById(t);
+        if (iframe) {
+          iframe.src = `https://s.tradingview.com/widgetembed/?symbol=${tickers[t]}&interval=D&theme=${mode}`;
+        }
+      });
+    }
+
+    document.getElementById("theme").addEventListener("change", e => {
+      setTheme(e.target.value);
+    });
+
+    // Default auto
+    setTheme("auto");
+  </script>
+</body>
+</html>
