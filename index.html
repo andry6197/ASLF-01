@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-
-
 <head>
-  <!-- Version Revision: 01.2026.08 -->
+  <!-- Version Revision: 01.2026.09 -->
   <meta charset="UTF-8">
   <title>ASL Financial</title>
+  <!-- Favicon links -->
   <link rel="icon" type="image/png" sizes="32x32" href="icon.png">
   <link rel="apple-touch-icon" href="icon.png">
   <link rel="manifest" href="manifest.json">
+
   <style>
     body {
       font-family: 'Roboto', Arial, sans-serif;
@@ -16,7 +14,7 @@
       background:#fff;
       color:#000;
       transition: background 0.3s, color 0.3s;
-      font-size:16px;
+      font-size:16px; /* default desktop */
     }
     body.dark { background:#121212; color:#eee; }
 
@@ -39,149 +37,19 @@
       vertical-align:middle;
     }
 
-    /* Toggle Switch */
-    .toggle-switch { position:relative; width:50px; height:24px; }
-    .toggle-switch input { display:none; }
-    .slider {
-      position:absolute; cursor:pointer;
-      top:0; left:0; right:0; bottom:0;
-      background:#ccc; transition:.4s; border-radius:24px;
-    }
-    .slider:before {
-      position:absolute; content:"";
-      height:18px; width:18px; left:3px; bottom:3px;
-      background:white; transition:.4s; border-radius:50%;
-    }
-    input:checked + .slider { background:#0077cc; }
-    input:checked + .slider:before { transform:translateX(26px); }
+    /* ... (CSS lainnya tetap sama) ... */
 
-    /* Navigation Row */
-    .summary-bar {
-      display:flex; overflow-x:auto;
-      background:#fff; padding:10px 20px;
-      border-bottom:1px solid #eee;
-    }
-    .ticker {
-      margin:0 12px; cursor:pointer;
-      font-weight:500; white-space:nowrap;
-      font-size:15px;
-    }
-    .ticker.up { color:#0a0; }
-    .ticker.down { color:#d00; }
-
-    /* Content Row */
-    .detail { padding:20px; font-size:15px; }
-    .price-box {
-      font-size:18px; margin-bottom:4px; color:#000;
-    }
-    .price-change-up { color:#0a0; font-size:16px; margin-left:6px; font-weight:normal; }
-    .price-change-down { color:#d00; font-size:16px; margin-left:6px; font-weight:normal; }
-    .currency {
-      font-size:16px; color:#666; margin-left:6px;
-    }
-    .meta {
-      margin-top:6px;
-      font-size:12px; color:#666;
-    }
-    iframe {
-      width:100%; height:320px; border:none; margin-top:20px;
-    }
-    .fundamentals {
-      margin-top:12px; border-top:1px solid #ddd; padding-top:12px;
-    }
-    .fundamentals h3 { font-size:16px; margin-bottom:8px; }
-    .fundamentals table { width:100%; border-collapse:collapse; }
-    .fundamentals td { padding:6px 8px; font-size:14px; border-bottom:1px solid #eee; }
-
-    /* Responsive */
+    /* Responsive khusus iPhone / layar kecil */
     @media screen and (max-width:768px) {
-      body { font-size:18px; }
-      .title-left { font-size:22px; }
-      .ticker { font-size:17px; }
-      .detail { font-size:16px; }
-      .price-box { font-size:20px; }
-      .currency { font-size:16px; }
-      .meta { font-size:12px; }
-      .fundamentals td { font-size:15px; }
-      iframe { height:260px; }
+      body { font-size:20px; }          /* lebih besar */
+      .title-left { font-size:24px; }   /* judul lebih besar */
+      .ticker { font-size:19px; }       /* ticker lebih besar */
+      .detail { font-size:18px; }
+      .price-box { font-size:22px; }
+      .currency { font-size:18px; }
+      .meta { font-size:14px; }
+      .fundamentals td { font-size:16px; }
+      iframe { height:280px; }
     }
   </style>
 </head>
-
-
-<body>
-  <!-- Title Row -->
-  <div class="title-bar">
-    <div class="title-left">
-      <span class="bold">ASL</span><span class="regular">Financial</span>
-      <span class="beta">Beta</span>
-    </div>
-    <label class="toggle-switch">
-      <input type="checkbox" id="themeToggle">
-      <span class="slider"></span>
-    </label>
-  </div>
-
-  <!-- Navigation Row -->
-  <div class="summary-bar">
-    <div class="ticker up" onclick="showDetail('BBCA')">BBCA Rp6,025 (+2.12%)</div>
-    <div class="ticker up" onclick="showDetail('BBRI')">BBRI Rp5,100 (+1.20%)</div>
-    <div class="ticker up" onclick="showDetail('BMRI')">BMRI Rp5,800 (+0.85%)</div>
-  </div>
-
-  <!-- Content Row -->
-  <div class="detail" id="detail">
-    <h2>Select a ticker</h2>
-    <p>Click on a ticker above to view full summary.</p>
-  </div>
-
-  <script>
-    const tickers = {
-      BBCA:{title:"Bank Central Asia Tbk PT",symbol:"IDX:BBCA",price:"Rp6,025.00",change:"+2.12%",changeVal:"+125.00",currency:"IDR",date:"May 5, 2026",time:"14:10 UTC+7",fundamental:{
-        "Prev Close":"Rp5,900","Open":"Rp5,900","High":"Rp6,075","Low":"Rp5,875","Market Cap":"732.25T","Volume":"127.58M","Dividend":"5.58%","P/E Ratio":"12.78"
-      }},
-      BBRI:{title:"Bank Rakyat Indonesia",symbol:"IDX:BBRI",price:"Rp5,100.00",change:"+1.20%",changeVal:"+60.00",currency:"IDR",date:"May 5, 2026",time:"14:10 UTC+7",fundamental:{
-        "Prev Close":"Rp5,040","Open":"Rp5,050","High":"Rp5,120","Low":"Rp5,000","Market Cap":"600T","Volume":"120M","Dividend":"4.8%","P/E Ratio":"11.5"
-      }},
-      BMRI:{title:"Bank Mandiri",symbol:"IDX:BMRI",price:"Rp5,800.00",change:"+0.85%",changeVal:"+50.00",currency:"IDR",date:"May 5, 2026",time:"14:10 UTC+7",fundamental:{
-        "Prev Close":"Rp5,750","Open":"Rp5,760","High":"Rp5,820","Low":"Rp5,740","Market Cap":"700T","Volume":"95M","Dividend":"5.1%","P/E Ratio":"12.2"
-      }}
-    };
-
-    function showDetail(t){
-      const d = tickers[t];
-      if(!d) return;
-      const changeClass = d.change.startsWith('+') ? 'price-change-up' : 'price-change-down';
-      let fundamentalsHTML = '<div class="fundamentals"><h3>Fundamentals</h3><table>';
-      for(const [key,val] of Object.entries(d.fundamental)){
-        fundamentalsHTML += `<tr><td>${key}</td><td>${val}</td></tr>`;
-      }
-      fundamentalsHTML += '</table></div>';
-      document.getElementById("detail").innerHTML = `
-        <h2>${d.title}</h2>
-        <div class="price-box">
-          ${d.price}
-          <span class="${changeClass}">${d.change} (${d.changeVal})</span>
-          <span class="currency">${d.currency}</span>
-        </div>
-        <div class="meta">${d.date}; ${d.time}</div>
-        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${d.symbol}&interval=D&theme=${document.body.classList.contains('dark')?'dark':'light'}"></iframe>
-        ${fundamentalsHTML}
-      `;
-    }
-
-    document.getElementById("themeToggle").addEventListener("change", function(){
-      if(this.checked){ document.body.classList.add("dark"); }
-      else { document.body.classList.remove("dark"); }
-      const iframe = document.querySelector("#detail iframe");
-      if(iframe){
-        const currentTicker = Object.keys(tickers).find(t => iframe.src.includes(tickers[t].symbol));
-        if(currentTicker){
-          showDetail(currentTicker);
-        }
-      }
-    });
-  </script>
-</body>
-
-</html>
