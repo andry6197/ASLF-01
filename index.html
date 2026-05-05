@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
   <!-- Version Revision: 01.2026.09 -->
   <meta charset="UTF-8">
@@ -57,79 +57,78 @@
 </head>
 
 <body>
-  <h1>My Stock Watchlist</h1>
-  <div class="toggle">
-    <label for="theme">Theme: </label>
-    <select id="theme">
-      <option value="light">Light</option>
-      <option value="dark">Dark</option>
-      <option value="auto">Auto (OS)</option>
-      <option value="time">Auto (Day/Night)</option>
-    </select>
+  <!-- Title Row -->
+  <div class="title-bar">
+    <div class="title-left">
+      <span class="bold">ASL</span><span class="regular">Financial</span>
+      <span class="beta">Beta</span>
+    </div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="themeToggle">
+      <span class="slider"></span>
+    </label>
   </div>
-  <div class="container">
-    <!-- Column ID -->
-    <div class="column">
-      <div class="card"><h3>BBCA</h3><iframe id="BBCA"></iframe><a href="https://www.tradingview.com/symbols/IDX-BBCA/" target="_blank">Detail</a></div>
-      <div class="card"><h3>BBRI</h3><iframe id="BBRI"></iframe><a href="https://www.tradingview.com/symbols/IDX-BBRI/" target="_blank">Detail</a></div>
-      <div class="card"><h3>BMRI</h3><iframe id="BMRI"></iframe><a href="https://www.tradingview.com/symbols/IDX-BMRI/" target="_blank">Detail</a></div>
-      <div class="card"><h3>BBNI</h3><iframe id="BBNI"></iframe><a href="https://www.tradingview.com/symbols/IDX-BBNI/" target="_blank">Detail</a></div>
-      <div class="card"><h3>ITMG</h3><iframe id="ITMG"></iframe><a href="https://www.tradingview.com/symbols/IDX-ITMG/" target="_blank">Detail</a></div>
-      <div class="card"><h3>PTBA</h3><iframe id="PTBA"></iframe><a href="https://www.tradingview.com/symbols/IDX-PTBA/" target="_blank">Detail</a></div>
-      <div class="card"><h3>PANI</h3><iframe id="PANI"></iframe><a href="https://www.tradingview.com/symbols/IDX-PANI/" target="_blank">Detail</a></div>
-    </div>
 
-    <!-- Column US -->
-    <div class="column">
-      <div class="card"><h3>GOOG</h3><iframe id="GOOG"></iframe><a href="https://www.tradingview.com/symbols/NASDAQ-GOOG/" target="_blank">Detail</a></div>
-      <div class="card"><h3>NVDA</h3><iframe id="NVDA"></iframe><a href="https://www.tradingview.com/symbols/NASDAQ-NVDA/" target="_blank">Detail</a></div>
-      <div class="card"><h3>AAPL</h3><iframe id="AAPL"></iframe><a href="https://www.tradingview.com/symbols/NASDAQ-AAPL/" target="_blank">Detail</a></div>
-      <div class="card"><h3>AMZN</h3><iframe id="AMZN"></iframe><a href="https://www.tradingview.com/symbols/NASDAQ-AMZN/" target="_blank">Detail</a></div>
-      <div class="card"><h3>MSFT</h3><iframe id="MSFT"></iframe><a href="https://www.tradingview.com/symbols/NASDAQ-MSFT/" target="_blank">Detail</a></div>
-      <div class="card"><h3>TSLA</h3><iframe id="TSLA"></iframe><a href="https://www.tradingview.com/symbols/NASDAQ-TSLA/" target="_blank">Detail</a></div>
-      <div class="card"><h3>PLTR</h3><iframe id="PLTR"></iframe><a href="https://www.tradingview.com/symbols/NYSE-PLTR/" target="_blank">Detail</a></div>
-    </div>
+  <!-- Navigation Row -->
+  <div class="summary-bar">
+    <div class="ticker up" onclick="showDetail('BBCA')">BBCA Rp6,025 (+2.12%)</div>
+    <div class="ticker up" onclick="showDetail('BBRI')">BBRI Rp5,100 (+1.20%)</div>
+    <div class="ticker up" onclick="showDetail('BMRI')">BMRI Rp5,800 (+0.85%)</div>
+  </div>
+
+  <!-- Content Row -->
+  <div class="detail" id="detail">
+    <h2>Select a ticker</h2>
+    <p>Click on a ticker above to view full summary.</p>
   </div>
 
   <script>
     const tickers = {
-      BBCA: "IDX:BBCA", BBRI: "IDX:BBRI", BMRI: "IDX:BMRI", BBNI: "IDX:BBNI",
-      ITMG: "IDX:ITMG", PTBA: "IDX:PTBA", PANI: "IDX:PANI",
-      GOOG: "NASDAQ:GOOG", NVDA: "NASDAQ:NVDA", AAPL: "NASDAQ:AAPL",
-      AMZN: "NASDAQ:AMZN", MSFT: "NASDAQ:MSFT", TSLA: "NASDAQ:TSLA", PLTR: "NYSE:PLTR"
+      BBCA:{title:"Bank Central Asia Tbk PT",symbol:"IDX:BBCA",price:"Rp6,025.00",change:"+2.12%",changeVal:"+125.00",currency:"IDR",date:"May 5, 2026",time:"14:10 UTC+7",fundamental:{
+        "Prev Close":"Rp5,900","Open":"Rp5,900","High":"Rp6,075","Low":"Rp5,875","Market Cap":"732.25T","Volume":"127.58M","Dividend":"5.58%","P/E Ratio":"12.78"
+      }},
+      BBRI:{title:"Bank Rakyat Indonesia",symbol:"IDX:BBRI",price:"Rp5,100.00",change:"+1.20%",changeVal:"+60.00",currency:"IDR",date:"May 5, 2026",time:"14:10 UTC+7",fundamental:{
+        "Prev Close":"Rp5,040","Open":"Rp5,050","High":"Rp5,120","Low":"Rp5,000","Market Cap":"600T","Volume":"120M","Dividend":"4.8%","P/E Ratio":"11.5"
+      }},
+      BMRI:{title:"Bank Mandiri",symbol:"IDX:BMRI",price:"Rp5,800.00",change:"+0.85%",changeVal:"+50.00",currency:"IDR",date:"May 5, 2026",time:"14:10 UTC+7",fundamental:{
+        "Prev Close":"Rp5,750","Open":"Rp5,760","High":"Rp5,820","Low":"Rp5,740","Market Cap":"700T","Volume":"95M","Dividend":"5.1%","P/E Ratio":"12.2"
+      }}
     };
 
-    function setTheme(theme) {
-      let mode = "light";
-      if (theme === "dark") {
-        document.body.classList.add("dark");
-        mode = "dark";
-      } else if (theme === "light") {
-        document.body.classList.remove("dark");
-        mode = "light";
-      } else if (theme === "auto") {
-        mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-        document.body.classList.toggle("dark", mode === "dark");
-      } else if (theme === "time") {
-        const hour = new Date().getHours();
-        mode = (hour >= 18 || hour < 6) ? "dark" : "light";
-        document.body.classList.toggle("dark", mode === "dark");
+    function showDetail(t){
+      const d = tickers[t];
+      if(!d) return;
+      const changeClass = d.change.startsWith('+') ? 'price-change-up' : 'price-change-down';
+      let fundamentalsHTML = '<div class="fundamentals"><h3>Fundamentals</h3><table>';
+      for(const [key,val] of Object.entries(d.fundamental)){
+        fundamentalsHTML += `<tr><td>${key}</td><td>${val}</td></tr>`;
       }
-
-      Object.keys(tickers).forEach(t => {
-        const iframe = document.getElementById(t);
-        if (iframe) {
-          iframe.src = `https://s.tradingview.com/widgetembed/?symbol=${tickers[t]}&interval=D&theme=${mode}`;
-        }
-      });
+      fundamentalsHTML += '</table></div>';
+      document.getElementById("detail").innerHTML = `
+        <h2>${d.title}</h2>
+        <div class="price-box">
+          ${d.price}
+          <span class="${changeClass}">${d.change} (${d.changeVal})</span>
+          <span class="currency">${d.currency}</span>
+        </div>
+        <div class="meta">${d.date}; ${d.time}</div>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${d.symbol}&interval=D&theme=${document.body.classList.contains('dark')?'dark':'light'}"></iframe>
+        ${fundamentalsHTML}
+      `;
     }
 
-    document.getElementById("theme").addEventListener("change", e => {
-      setTheme(e.target.value);
+    document.getElementById("themeToggle").addEventListener("change", function(){
+      if(this.checked){ document.body.classList.add("dark"); }
+      else { document.body.classList.remove("dark"); }
+      const iframe = document.querySelector("#detail iframe");
+      if(iframe){
+        const currentTicker = Object.keys(tickers).find(t => iframe.src.includes(tickers[t].symbol));
+        if(currentTicker){
+          showDetail(currentTicker);
+        }
+      }
     });
-
-    // Default auto
-    setTheme("auto");
   </script>
 </body>
+
 </html>
