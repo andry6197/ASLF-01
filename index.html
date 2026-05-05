@@ -1,7 +1,7 @@
 <html>
 
 <head>
-  <!-- Version Revision: 01.2026.11 -->
+  <!-- Version Revision: 01.2026.12 -->
   <meta charset="UTF-8">
   <title>ASL Financial</title>
 
@@ -17,76 +17,54 @@
       background:#fff;
       color:#000;
       transition: background 0.3s, color 0.3s;
-      font-size:16px; /* default desktop */
+      font-size:16px;
     }
     body.dark { background:#121212; color:#eee; }
 
     /* Title Row */
-    .title-bar {
-      display:flex; justify-content:space-between; align-items:center;
-      padding:12px 20px; border-bottom:1px solid #ddd;
-      background:#f9f9f9;
-    }
+    .title-bar { display:flex; justify-content:space-between; align-items:center;
+      padding:12px 20px; border-bottom:1px solid #ddd; background:#f9f9f9; }
     .title-left { font-size:20px; }
     .title-left span.bold { font-weight:700; }
     .title-left span.regular { font-weight:400; margin-left:4px; }
-    .beta {
-      font-size:50%;
-      color:#888;
-      margin-left:8px;
-      border:1px solid #ccc;
-      padding:1px 4px;
-      border-radius:4px;
-      vertical-align:middle;
-    }
+    .beta { font-size:50%; color:#888; margin-left:8px; border:1px solid #ccc;
+      padding:1px 4px; border-radius:4px; vertical-align:middle; }
 
-    /* Toggle Switch (iPhone style) */
-    .toggle-switch {
-      position:relative; width:50px; height:24px;
-    }
+    /* Toggle Switch */
+    .toggle-switch { position:relative; width:50px; height:24px; }
     .toggle-switch input { display:none; }
-    .slider {
-      position:absolute; cursor:pointer;
-      top:0; left:0; right:0; bottom:0;
-      background:#ccc; transition:.4s; border-radius:24px;
-    }
-    .slider:before {
-      position:absolute; content:"";
-      height:18px; width:18px; left:3px; bottom:3px;
-      background:white; transition:.4s; border-radius:50%;
-    }
+    .slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0;
+      background:#ccc; transition:.4s; border-radius:24px; }
+    .slider:before { position:absolute; content:""; height:18px; width:18px;
+      left:3px; bottom:3px; background:white; transition:.4s; border-radius:50%; }
     input:checked + .slider { background:#0077cc; }
     input:checked + .slider:before { transform:translateX(26px); }
 
     /* Navigation Row */
-    .summary-bar {
-      display:flex; overflow-x:auto;
-      background:#fff; padding:10px 20px;
-      border-bottom:1px solid #eee;
-    }
-    .ticker {
-      margin:0 12px; cursor:pointer;
-      font-weight:500; white-space:nowrap;
-      font-size:15px;
-    }
+    .summary-bar { display:flex; overflow-x:auto; background:#fff; padding:10px 20px;
+      border-bottom:1px solid #eee; }
+    .ticker { margin:0 12px; cursor:pointer; font-weight:500; white-space:nowrap; font-size:15px; }
     .ticker.up { color:#0a0; }
     .ticker.down { color:#d00; }
 
     /* Content Row */
     .detail { padding:20px; font-size:15px; }
     .price-box { font-size:18px; margin-bottom:4px; color:#000; }
-    body.dark .price-box { color:#fff; } /* harga putih saat dark mode */
+    body.dark .price-box { color:#fff; }
     .price-change-up { color:#0a0; font-size:16px; margin-left:6px; }
     .price-change-down { color:#d00; font-size:16px; margin-left:6px; }
     .currency { font-size:16px; color:#666; margin-left:6px; }
+    body.dark .currency { color:#ccc; }
     .meta { margin-top:6px; font-size:12px; color:#666; }
+    body.dark .meta { color:#aaa; }
     iframe { width:100%; height:320px; border:none; margin-top:20px; }
     .fundamentals { margin-top:12px; border-top:1px solid #ddd; padding-top:12px; }
     .fundamentals h3 { font-size:16px; margin-bottom:8px; }
     .fundamentals table { width:100%; border-collapse:collapse; }
-    .fundamentals td { padding:6px 8px; font-size:14px; border-bottom:1px solid #eee; }
+    .fundamentals td { padding:6px 8px; font-size:14px; border-bottom:1px solid #eee; color:#000; }
+    body.dark .fundamentals td { color:#fff; border-bottom:1px solid #444; }
 
-    /* Responsive khusus iPhone / layar kecil */
+    /* Responsive khusus iPhone */
     @media screen and (max-width:768px) {
       body { font-size:20px; }
       .title-left { font-size:24px; }
@@ -129,16 +107,22 @@
 
   <script>
     const tickers = {
-      BBCA:{title:"Bank Central Asia Tbk PT",symbol:"IDX:BBCA",price:"Rp6,025.00",change:"+2.12%",changeVal:"+125.00",currency:"IDR",date:"May 5, 2026",time:"14:10 UTC+7",fundamental:{
+      BBCA:{title:"Bank Central Asia Tbk PT",symbol:"IDX:BBCA",price:"Rp6,025.00",change:"+2.12%",changeVal:"+125.00",currency:"IDR",fundamental:{
         "Prev Close":"Rp5,900","Open":"Rp5,900","High":"Rp6,075","Low":"Rp5,875","Market Cap":"732.25T","Volume":"127.58M","Dividend":"5.58%","P/E Ratio":"12.78"
       }},
-      BBRI:{title:"Bank Rakyat Indonesia",symbol:"IDX:BBRI",price:"Rp5,100.00",change:"+1.20%",changeVal:"+60.00",currency:"IDR",date:"May 5, 2026",time:"14:12 UTC+7",fundamental:{
+      BBRI:{title:"Bank Rakyat Indonesia",symbol:"IDX:BBRI",price:"Rp5,100.00",change:"+1.20%",changeVal:"+60.00",currency:"IDR",fundamental:{
         "Prev Close":"Rp5,040","Open":"Rp5,050","High":"Rp5,120","Low":"Rp5,000","Market Cap":"600T","Volume":"120M","Dividend":"4.8%","P/E Ratio":"11.5"
       }},
-      BMRI:{title:"Bank Mandiri",symbol:"IDX:BMRI",price:"Rp5,800.00",change:"+0.85%",changeVal:"+50.00",currency:"IDR",date:"May 5, 2026",time:"14:15 UTC+7",fundamental:{
+      BMRI:{title:"Bank Mandiri",symbol:"IDX:BMRI",price:"Rp5,800.00",change:"+0.85%",changeVal:"+50.00",currency:"IDR",fundamental:{
         "Prev Close":"Rp5,750","Open":"Rp5,760","High":"Rp5,820","Low":"Rp5,740","Market Cap":"700T","Volume":"95M","Dividend":"5.1%","P/E Ratio":"12.2"
       }}
     };
+
+    function formatTime(date){
+      return date.toLocaleString('id-ID', {
+        hour:'2-digit', minute:'2-digit', second:'2-digit'
+      }) + " WIB";
+    }
 
     function showDetail(t){
       const d = tickers[t];
@@ -149,6 +133,7 @@
         fundamentalsHTML += `<tr><td>${key}</td><td>${val}</td></tr>`;
       }
       fundamentalsHTML += '</table></div>';
+      const now = new Date();
       document.getElementById("detail").innerHTML = `
         <h2>${d.title}</h2>
         <div class="price-box">
@@ -156,7 +141,7 @@
           <span class="${changeClass}">${d.change} (${d.changeVal})</span>
           <span class="currency">${d.currency}</span>
         </div>
-        <div class="meta">${d.date}; ${d.time}</div>
+        <div class="meta">${formatTime(now)}</div>
         <iframe src="https://s.tradingview.com/widgetembed/?symbol=${d.symbol}&interval=D&theme=${document.body.classList.contains('dark')?'dark':'light'}"></iframe>
         ${fundamentalsHTML}
       `;
