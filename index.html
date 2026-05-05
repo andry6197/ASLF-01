@@ -136,9 +136,8 @@
     function renderNav(){
       const nav = document.getElementById("navRow");
       nav.innerHTML = '';
-      for(const [symbol,d] of Object.entries(tickers)){
-        const cls = d.change>=0 ? 'ticker up' : 'ticker down';
-        nav.innerHTML += `<div class="${cls}" onclick="showDetail('${symbol}')">${symbol.split(':')[1]} Rp${d.price} (${d.change.toFixed(2)}%)</div>`;
+      for(const symbol of Object.keys(tickers)){
+        nav.innerHTML += `<div class="ticker" onclick="showDetail('${symbol}')">${symbol.split(':')[1]}</div>`;
       }
     }
 
@@ -151,6 +150,7 @@
         fundamentalsHTML += `<tr><td>${key}</td><td>${val}</td></tr>`;
       }
       fundamentalsHTML += '</table></div>';
+      const theme = document.body.classList.contains('dark') ? 'dark' : 'light';
       document.getElementById("detail").innerHTML = `
         <h2>${d.title}</h2>
         <div class="price-box">
@@ -159,7 +159,7 @@
           <span class="currency">IDR</span>
         </div>
         <div class="meta">${formatTime(now)}</div>
-        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=${document.body.classList.contains('dark')?'dark':'light'}&style=1&locale=en"
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=${theme}&style=1&locale=en"
                 width="100%" height="420" frameborder="0"></iframe>
         ${fundamentalsHTML}
       `;
@@ -168,12 +168,20 @@
     document.getElementById("themeToggle").addEventListener("change", function(){
       if(this.checked){ document.body.classList.add("dark"); }
       else { document.body.classList.remove("dark"); }
+      // re-render detail to refresh chart theme
+      const detail = document.getElementById("detail");
+      const currentTitle = detail.querySelector("h2");
+      if(currentTitle){
+        const currentSymbol = Object.keys(tickers).find(s => tickers[s].title===currentTitle.textContent);
+        if(currentSymbol){ showDetail(currentSymbol); }
+      }
     });
 
     // Init
     renderNav();
   </script>
 </body>
+
 
 
 </html>
