@@ -1,17 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
+
 <head>
-
-<link rel="manifest" href="manifest.json">
-<script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js");
-  }
-</script>
-
-  <!-- Version Revision: 01.2026.00 -->
+  <!-- Version Revision: 01.2026.08 -->
   <meta charset="UTF-8">
   <title>ASL Financial</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="manifest" href="manifest.json">
   <style>
     body {
       font-family: 'Roboto', Arial, sans-serif;
@@ -19,6 +16,7 @@
       background:#fff;
       color:#000;
       transition: background 0.3s, color 0.3s;
+      font-size:16px;
     }
     body.dark { background:#121212; color:#eee; }
 
@@ -32,9 +30,16 @@
     .title-left span.bold { font-weight:700; }
     .title-left span.regular { font-weight:400; margin-left:4px; }
     .beta {
-      font-size:12px; color:#888; margin-left:8px;
-      border:1px solid #ccc; padding:2px 6px; border-radius:4px;
+      font-size:50%;
+      color:#888;
+      margin-left:8px;
+      border:1px solid #ccc;
+      padding:1px 4px;
+      border-radius:4px;
+      vertical-align:middle;
     }
+
+    /* Toggle Switch */
     .toggle-switch { position:relative; width:50px; height:24px; }
     .toggle-switch input { display:none; }
     .slider {
@@ -59,16 +64,51 @@
     .ticker {
       margin:0 12px; cursor:pointer;
       font-weight:500; white-space:nowrap;
+      font-size:15px;
     }
     .ticker.up { color:#0a0; }
     .ticker.down { color:#d00; }
 
     /* Content Row */
-    .detail { padding:20px; }
-    iframe { width:100%; height:320px; border:none; }
-    @media(max-width:600px){ iframe{height:240px;} }
+    .detail { padding:20px; font-size:15px; }
+    .price-box {
+      font-size:18px; margin-bottom:4px; color:#000;
+    }
+    .price-change-up { color:#0a0; font-size:16px; margin-left:6px; font-weight:normal; }
+    .price-change-down { color:#d00; font-size:16px; margin-left:6px; font-weight:normal; }
+    .currency {
+      font-size:16px; color:#666; margin-left:6px;
+    }
+    .meta {
+      margin-top:6px;
+      font-size:12px; color:#666;
+    }
+    iframe {
+      width:100%; height:320px; border:none; margin-top:20px;
+    }
+    .fundamentals {
+      margin-top:12px; border-top:1px solid #ddd; padding-top:12px;
+    }
+    .fundamentals h3 { font-size:16px; margin-bottom:8px; }
+    .fundamentals table { width:100%; border-collapse:collapse; }
+    .fundamentals td { padding:6px 8px; font-size:14px; border-bottom:1px solid #eee; }
+
+    /* Responsive */
+    @media screen and (max-width:768px) {
+      body { font-size:18px; }
+      .title-left { font-size:22px; }
+      .ticker { font-size:17px; }
+      .detail { font-size:16px; }
+      .price-box { font-size:20px; }
+      .currency { font-size:16px; }
+      .meta { font-size:12px; }
+      .fundamentals td { font-size:15px; }
+      iframe { height:260px; }
+    }
   </style>
 </head>
+
+
 <body>
   <!-- Title Row -->
   <div class="title-bar">
@@ -84,13 +124,9 @@
 
   <!-- Navigation Row -->
   <div class="summary-bar">
-    <div class="ticker up" onclick="showDetail('BBCA')">BBCA Rp6,050 (+2.54%)</div>
+    <div class="ticker up" onclick="showDetail('BBCA')">BBCA Rp6,025 (+2.12%)</div>
     <div class="ticker up" onclick="showDetail('BBRI')">BBRI Rp5,100 (+1.20%)</div>
     <div class="ticker up" onclick="showDetail('BMRI')">BMRI Rp5,800 (+0.85%)</div>
-    <div class="ticker up" onclick="showDetail('BBNI')">BBNI Rp9,200 (+0.40%)</div>
-    <div class="ticker down" onclick="showDetail('ITMG')">ITMG Rp22,500 (-0.75%)</div>
-    <div class="ticker down" onclick="showDetail('PTBA')">PTBA Rp3,200 (-1.10%)</div>
-    <div class="ticker up" onclick="showDetail('PANI')">PANI Rp1,250 (+0.60%)</div>
   </div>
 
   <!-- Content Row -->
@@ -101,33 +137,42 @@
 
   <script>
     const tickers = {
-      BBCA:{title:"Bank Central Asia Tbk PT",symbol:"IDX:BBCA",fundamental:`Prev Close: Rp5,900<br>Open: Rp5,900<br>High: Rp6,075<br>Low: Rp5,875<br>Volume: 86.34M<br>Dividend: 5.53%<br>P/E Ratio: 12.88`},
-      BBRI:{title:"Bank Rakyat Indonesia",symbol:"IDX:BBRI",fundamental:`Prev Close: Rp5,040<br>Open: Rp5,050<br>High: Rp5,120<br>Low: Rp5,000<br>Volume: 120M<br>Dividend: 4.8%<br>P/E Ratio: 11.5`},
-      BMRI:{title:"Bank Mandiri",symbol:"IDX:BMRI",fundamental:`Prev Close: Rp5,750<br>Open: Rp5,760<br>High: Rp5,820<br>Low: Rp5,740<br>Volume: 95M<br>Dividend: 5.1%<br>P/E Ratio: 12.2`},
-      BBNI:{title:"Bank Negara Indonesia",symbol:"IDX:BBNI",fundamental:`Prev Close: Rp9,160<br>Open: Rp9,180<br>High: Rp9,220<br>Low: Rp9,150<br>Volume: 60M<br>Dividend: 4.5%<br>P/E Ratio: 10.9`},
-      ITMG:{title:"Indo Tambangraya Megah",symbol:"IDX:ITMG",fundamental:`Prev Close: Rp22,670<br>Open: Rp22,600<br>High: Rp22,700<br>Low: Rp22,400<br>Volume: 15M<br>Dividend: 7.2%<br>P/E Ratio: 8.5`},
-      PTBA:{title:"Bukit Asam",symbol:"IDX:PTBA",fundamental:`Prev Close: Rp3,235<br>Open: Rp3,210<br>High: Rp3,250<br>Low: Rp3,180<br>Volume: 30M<br>Dividend: 6.0%<br>P/E Ratio: 9.8`},
-      PANI:{title:"Pantai Indah Kapuk Dua",symbol:"IDX:PANI",fundamental:`Prev Close: Rp1,242<br>Open: Rp1,245<br>High: Rp1,255<br>Low: Rp1,240<br>Volume: 12M<br>Dividend: 2.5%<br>P/E Ratio: 15.0`}
+      BBCA:{title:"Bank Central Asia Tbk PT",symbol:"IDX:BBCA",price:"Rp6,025.00",change:"+2.12%",changeVal:"+125.00",currency:"IDR",date:"May 5, 2026",time:"14:10 UTC+7",fundamental:{
+        "Prev Close":"Rp5,900","Open":"Rp5,900","High":"Rp6,075","Low":"Rp5,875","Market Cap":"732.25T","Volume":"127.58M","Dividend":"5.58%","P/E Ratio":"12.78"
+      }},
+      BBRI:{title:"Bank Rakyat Indonesia",symbol:"IDX:BBRI",price:"Rp5,100.00",change:"+1.20%",changeVal:"+60.00",currency:"IDR",date:"May 5, 2026",time:"14:10 UTC+7",fundamental:{
+        "Prev Close":"Rp5,040","Open":"Rp5,050","High":"Rp5,120","Low":"Rp5,000","Market Cap":"600T","Volume":"120M","Dividend":"4.8%","P/E Ratio":"11.5"
+      }},
+      BMRI:{title:"Bank Mandiri",symbol:"IDX:BMRI",price:"Rp5,800.00",change:"+0.85%",changeVal:"+50.00",currency:"IDR",date:"May 5, 2026",time:"14:10 UTC+7",fundamental:{
+        "Prev Close":"Rp5,750","Open":"Rp5,760","High":"Rp5,820","Low":"Rp5,740","Market Cap":"700T","Volume":"95M","Dividend":"5.1%","P/E Ratio":"12.2"
+      }}
     };
 
     function showDetail(t){
       const d = tickers[t];
       if(!d) return;
+      const changeClass = d.change.startsWith('+') ? 'price-change-up' : 'price-change-down';
+      let fundamentalsHTML = '<div class="fundamentals"><h3>Fundamentals</h3><table>';
+      for(const [key,val] of Object.entries(d.fundamental)){
+        fundamentalsHTML += `<tr><td>${key}</td><td>${val}</td></tr>`;
+      }
+      fundamentalsHTML += '</table></div>';
       document.getElementById("detail").innerHTML = `
         <h2>${d.title}</h2>
+        <div class="price-box">
+          ${d.price}
+          <span class="${changeClass}">${d.change} (${d.changeVal})</span>
+          <span class="currency">${d.currency}</span>
+        </div>
+        <div class="meta">${d.date}; ${d.time}</div>
         <iframe src="https://s.tradingview.com/widgetembed/?symbol=${d.symbol}&interval=D&theme=${document.body.classList.contains('dark')?'dark':'light'}"></iframe>
-        <p>${d.fundamental}</p>
+        ${fundamentalsHTML}
       `;
     }
 
-    // Toggle Light/Dark
     document.getElementById("themeToggle").addEventListener("change", function(){
-      if(this.checked){
-        document.body.classList.add("dark");
-      } else {
-        document.body.classList.remove("dark");
-      }
-      // reload chart if visible
+      if(this.checked){ document.body.classList.add("dark"); }
+      else { document.body.classList.remove("dark"); }
       const iframe = document.querySelector("#detail iframe");
       if(iframe){
         const currentTicker = Object.keys(tickers).find(t => iframe.src.includes(tickers[t].symbol));
@@ -138,4 +183,5 @@
     });
   </script>
 </body>
+
 </html>
