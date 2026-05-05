@@ -64,18 +64,30 @@
     .fundamentals td { padding:6px 8px; font-size:14px; border-bottom:1px solid #eee; color:#000; }
     body.dark .fundamentals td { color:#fff; border-bottom:1px solid #444; }
 
-    /* Responsive khusus iPhone */
-    @media screen and (max-width:768px) {
-      body { font-size:20px; }
-      .title-left { font-size:24px; }
-      .ticker { font-size:19px; }
-      .detail { font-size:18px; }
-      .price-box { font-size:22px; }
-      .currency { font-size:18px; }
-      .meta { font-size:14px; }
-      .fundamentals td { font-size:16px; }
-      iframe { height:280px; }
-    }
+/* Default (Desktop / Laptop) */
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  font-size: 16px;
+}
+.title-left { font-size: 20px; }
+.ticker { font-size: 15px; }
+.detail { font-size: 15px; }
+.price-box { font-size: 18px; }
+.fundamentals td { font-size: 14px; }
+
+/* iPhone / Mobile (≤1170px width) */
+@media screen and (max-width: 1170px) {
+  body { font-size: 26px; line-height: 1.5; }   /* teks umum lebih besar */
+  .title-left { font-size: 30px; }             /* judul menonjol */
+  .ticker { font-size: 26px; padding: 12px; }  /* ticker jelas, ada ruang */
+  .detail { font-size: 24px; }                 /* teks detail lebih besar */
+  .price-box { font-size: 32px; margin: 14px 0; } /* harga utama besar */
+  .fundamentals td { font-size: 22px; padding: 8px 12px; } /* tabel readable */
+  h2 { font-size: 28px; margin-bottom: 12px; } /* judul emiten besar */
+  .meta { font-size: 22px; margin-top: 10px; } /* jam jelas */
+  iframe { width: 100%; height: 520px; }       /* chart lebih tinggi di mobile */
+}
+
   </style>
 </head>
 
