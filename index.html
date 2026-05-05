@@ -1,7 +1,7 @@
 <html>
 
 <head>
-  <!-- Version Revision: 01.2026.10 -->
+  <!-- Version Revision: 01.2026.11 -->
   <meta charset="UTF-8">
   <title>ASL Financial</title>
 
@@ -40,6 +40,24 @@
       vertical-align:middle;
     }
 
+    /* Toggle Switch (iPhone style) */
+    .toggle-switch {
+      position:relative; width:50px; height:24px;
+    }
+    .toggle-switch input { display:none; }
+    .slider {
+      position:absolute; cursor:pointer;
+      top:0; left:0; right:0; bottom:0;
+      background:#ccc; transition:.4s; border-radius:24px;
+    }
+    .slider:before {
+      position:absolute; content:"";
+      height:18px; width:18px; left:3px; bottom:3px;
+      background:white; transition:.4s; border-radius:50%;
+    }
+    input:checked + .slider { background:#0077cc; }
+    input:checked + .slider:before { transform:translateX(26px); }
+
     /* Navigation Row */
     .summary-bar {
       display:flex; overflow-x:auto;
@@ -57,6 +75,7 @@
     /* Content Row */
     .detail { padding:20px; font-size:15px; }
     .price-box { font-size:18px; margin-bottom:4px; color:#000; }
+    body.dark .price-box { color:#fff; } /* harga putih saat dark mode */
     .price-change-up { color:#0a0; font-size:16px; margin-left:6px; }
     .price-change-down { color:#d00; font-size:16px; margin-left:6px; }
     .currency { font-size:16px; color:#666; margin-left:6px; }
@@ -113,10 +132,10 @@
       BBCA:{title:"Bank Central Asia Tbk PT",symbol:"IDX:BBCA",price:"Rp6,025.00",change:"+2.12%",changeVal:"+125.00",currency:"IDR",date:"May 5, 2026",time:"14:10 UTC+7",fundamental:{
         "Prev Close":"Rp5,900","Open":"Rp5,900","High":"Rp6,075","Low":"Rp5,875","Market Cap":"732.25T","Volume":"127.58M","Dividend":"5.58%","P/E Ratio":"12.78"
       }},
-      BBRI:{title:"Bank Rakyat Indonesia",symbol:"IDX:BBRI",price:"Rp5,100.00",change:"+1.20%",changeVal:"+60.00",currency:"IDR",date:"May 5, 2026",time:"14:10 UTC+7",fundamental:{
+      BBRI:{title:"Bank Rakyat Indonesia",symbol:"IDX:BBRI",price:"Rp5,100.00",change:"+1.20%",changeVal:"+60.00",currency:"IDR",date:"May 5, 2026",time:"14:12 UTC+7",fundamental:{
         "Prev Close":"Rp5,040","Open":"Rp5,050","High":"Rp5,120","Low":"Rp5,000","Market Cap":"600T","Volume":"120M","Dividend":"4.8%","P/E Ratio":"11.5"
       }},
-      BMRI:{title:"Bank Mandiri",symbol:"IDX:BMRI",price:"Rp5,800.00",change:"+0.85%",changeVal:"+50.00",currency:"IDR",date:"May 5, 2026",time:"14:10 UTC+7",fundamental:{
+      BMRI:{title:"Bank Mandiri",symbol:"IDX:BMRI",price:"Rp5,800.00",change:"+0.85%",changeVal:"+50.00",currency:"IDR",date:"May 5, 2026",time:"14:15 UTC+7",fundamental:{
         "Prev Close":"Rp5,750","Open":"Rp5,760","High":"Rp5,820","Low":"Rp5,740","Market Cap":"700T","Volume":"95M","Dividend":"5.1%","P/E Ratio":"12.2"
       }}
     };
@@ -143,9 +162,11 @@
       `;
     }
 
+    // Toggle dark/light mode
     document.getElementById("themeToggle").addEventListener("change", function(){
       if(this.checked){ document.body.classList.add("dark"); }
       else { document.body.classList.remove("dark"); }
+      // Refresh current ticker view to apply theme
       const iframe = document.querySelector("#detail iframe");
       if(iframe){
         const currentTicker = Object.keys(tickers).find(t => iframe.src.includes(tickers[t].symbol));
