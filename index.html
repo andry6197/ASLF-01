@@ -93,11 +93,7 @@
   </div>
 
   <!-- Navigation Row -->
-  <div class="summary-bar">
-    <div class="ticker up" onclick="showDetail('BBCA')">BBCA Rp6,025 (+2.12%)</div>
-    <div class="ticker up" onclick="showDetail('BBRI')">BBRI Rp5,100 (+1.20%)</div>
-    <div class="ticker up" onclick="showDetail('BMRI')">BMRI Rp5,800 (+0.85%)</div>
-  </div>
+  <div class="summary-bar"></div>
 
   <!-- Content Row -->
   <div class="detail" id="detail">
@@ -105,69 +101,96 @@
     <p>Click on a ticker above to view full summary.</p>
   </div>
 
-<script>
-  // Data awal
-  const tickers = {
-    BBCA:{title:"Bank Central Asia Tbk PT",symbol:"IDX:BBCA",price:6025,change:2.12,changeVal:125,currency:"IDR",fundamental:{/*...*/}},
-    BBRI:{title:"Bank Rakyat Indonesia",symbol:"IDX:BBRI",price:5100,change:1.20,changeVal:60,currency:"IDR",fundamental:{/*...*/}},
-    BMRI:{title:"Bank Mandiri",symbol:"IDX:BMRI",price:5800,change:0.85,changeVal:50,currency:"IDR",fundamental:{/*...*/}}
-  };
+  <script>
+    // Data awal
+    const tickers = {
+      BBCA:{title:"Bank Central Asia Tbk PT",symbol:"IDX:BBCA",price:6025,change:2.12,changeVal:125,currency:"IDR",fundamental:{
+        "Prev Close":"Rp5,900","Open":"Rp5,900","High":"Rp6,075","Low":"Rp5,875","Market Cap":"732.25T","Volume":"127.58M","Dividend":"5.58%","P/E Ratio":"12.78"
+      }},
+      BBRI:{title:"Bank Rakyat Indonesia",symbol:"IDX:BBRI",price:5100,change:1.20,changeVal:60,currency:"IDR",fundamental:{
+        "Prev Close":"Rp5,040","Open":"Rp5,050","High":"Rp5,120","Low":"Rp5,000","Market Cap":"600T","Volume":"120M","Dividend":"4.8%","P/E Ratio":"11.5"
+      }},
+      BMRI:{title:"Bank Mandiri",symbol:"IDX:BMRI",price:5800,change:0.85,changeVal:50,currency:"IDR",fundamental:{
+        "Prev Close":"Rp5,750","Open":"Rp5,760","High":"Rp5,820","Low":"Rp5,740","Market Cap":"700T","Volume":"95M","Dividend":"5.1%","P/E Ratio":"12.2"
+      }}
+    };
 
-  // Format waktu
-  function formatTime(date){
-    return date.toLocaleString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+" WIB";
-  }
-
-  // Render Navigation Row
-  function renderNav(){
-    const nav = document.querySelector('.summary-bar');
-    nav.innerHTML = '';
-    for(const [key,d] of Object.entries(tickers)){
-      const cls = d.change>=0 ? 'ticker up' : 'ticker down';
-      nav.innerHTML += `<div class="${cls}" onclick="showDetail('${key}')">${key} Rp${d.price} (${d.change}%)</div>`;
+    // Format waktu
+    function formatTime(date){
+      return date.toLocaleString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+" WIB";
     }
-  }
 
-  // Render Content Row
-  function showDetail(t){
-    const d = tickers[t];
-    const changeClass = d.change>=0 ? 'price-change-up' : 'price-change-down';
-    let fundamentalsHTML = '<div class="fundamentals"><h3>Fundamentals</h3><table>';
-    for(const [key,val] of Object.entries(d.fundamental)){
-      fundamentalsHTML += `<tr><td>${key}</td><td>${val}</td></tr>`;
+    // Render Navigation Row
+    function renderNav(){
+      const nav = document.querySelector('.summary-bar');
+      nav.innerHTML = '';
+      for(const [key,d] of Object.entries(tickers)){
+        const cls = d.change>=0 ? 'ticker up' : 'ticker down';
+        nav.innerHTML += `<div class="${cls}" onclick="showDetail('${key}')">${key} Rp${d.price} (${d.change.toFixed(2)}%)</div>`;
+      }
     }
-    fundamentalsHTML += '</table></div>';
-    const now = new Date();
-    document.getElementById("detail").innerHTML = `
-      <h2>${d.title}</h2>
-      <div class="price-box">
-        Rp${d.price}
-        <span class="${changeClass}">${d.change}% (${d.changeVal})</span>
-        <span class="currency">${d.currency}</span>
-      </div>
-      <div class="meta">${formatTime(now)}</div>
-      <iframe src="https://s.tradingview.com/widgetembed/?symbol=${d.symbol}&interval=D&theme=${document.body.classList.contains('dark')?'dark':'light'}"></iframe>
-      ${fundamentalsHTML}
-    `;
-  }
 
-  // Simulasi realtime update (misalnya setiap 10 detik)
-  setInterval(()=>{
-    for(const d of Object.values(tickers)){
-      // Random simulasi perubahan harga
-      const delta = Math.floor(Math.random()*20-10);
-      d.price += delta;
-      d.changeVal = delta;
-      d.change = ((delta/d.price)*100).toFixed(2);
+    // Render Content Row
+    function showDetail(t){
+      const d = tickers[t];
+      const changeClass = d.change>=0 ? 'price-change-up' : 'price-change-down';
+      let fundamentalsHTML = '<div class="fundamentals"><h3>Fundamentals</h3><table>';
+      for(const [key,val] of Object.entries(d.fundamental)){
+        fundamentalsHTML += `<tr><td>${key}</td><td>${val}</td></tr>`;
+      }
+      fundamentalsHTML += '</table></div>';
+      const now = new Date();
+      document.getElementById("detail").innerHTML = `
+        <h2>${d.title}</h2>
+        <div class="price-box">
+          Rp${d.price}
+          <span class="${changeClass}">${d.change.toFixed(2)}% (${d.changeVal})</span>
+          <span class="currency">${d.currency}</span>
+        </div>
+        <div class="meta">${formatTime(now)}</div>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${d.symbol}&interval=D&theme=${document.body.classList.contains('dark')?'dark':'light'}"></iframe>
+        ${fundamentalsHTML}
+      `;
     }
+
+    // Simulasi realtime update (misalnya setiap 10 detik)
+    setInterval(()=>{
+      for(const d of Object.values(tickers)){
+        // Random simulasi perubahan harga
+        const delta = Math.floor(Math.random()*20-10);
+        d.price += delta;
+        d.changeVal = delta;
+        d.change = (delta/d.price*100);
+      }
+      renderNav();
+      // Refresh detail jika ada ticker sedang ditampilkan
+      const iframe = document.querySelector("#detail iframe");
+      if(iframe){
+        const currentTicker = Object.keys(tickers).find(t => iframe.src.includes(tickers[t].symbol));
+        if(currentTicker){
+          showDetail(currentTicker);
+        }
+      }
+    },10000);
+
+    // Toggle dark/light mode
+    document.getElementById("themeToggle").addEventListener("change", function(){
+      if(this.checked){ document.body.classList.add("dark"); }
+      else { document.body.classList.remove("dark"); }
+      // Refresh current ticker view to apply theme
+      const iframe = document.querySelector("#detail iframe");
+      if(iframe){
+        const currentTicker = Object.keys(tickers).find(t => iframe.src.includes(tickers[t].symbol));
+        if(currentTicker){
+          showDetail(currentTicker);
+        }
+      }
+    });
+
+    // Init
     renderNav();
-  },10000);
-
-  // Init
-  renderNav();
-</script>
-
-
+  </script>
 </body>
+
 
 </html>
