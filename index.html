@@ -6,6 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ASL Financial Beta</title>
 
+  <!-- Cache Control: force browser to always reload -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
@@ -83,7 +88,22 @@
       iframe { width: 100%; height: 520px; }
     }
   </style>
+
+  <!-- JS: force reload bypass cache -->
+  <script>
+    // Append timestamp to URL to force reload
+    (function(){
+      const currentUrl = window.location.href;
+      const hasQuery = currentUrl.includes('?');
+      const newUrl = hasQuery ? currentUrl + '&t=' + Date.now() : currentUrl + '?t=' + Date.now();
+      if(!sessionStorage.getItem('cacheBypass')){
+        sessionStorage.setItem('cacheBypass','true');
+        window.location.replace(newUrl);
+      }
+    })();
+  </script>
 </head>
+
 
 
 <body>
