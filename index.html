@@ -34,6 +34,7 @@
     .beta { font-size: 10px; margin-left: 8px; color: #888; }
     .summary-bar {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-around;
       padding: 10px;
       background: #eaeaea;
@@ -42,6 +43,7 @@
       cursor: pointer;
       font-size: 15px;
       font-weight: 600;
+      margin: 4px;
     }
     .detail {
       padding: 20px;
@@ -75,17 +77,17 @@
     body.dark .summary-bar { background: #2a2a2a; }
     body.dark .fundamentals td { border-bottom: 1px solid #444; }
 
-    /* iPhone / Mobile (≤1170px width) */
+    /* iPhone / Mobile (≤1170px width) → 50% smaller fonts */
     @media screen and (max-width: 1170px) {
-      body { font-size: 26px; line-height: 1.5; }
-      .title-left { font-size: 30px; }
-      .ticker { font-size: 26px; padding: 12px; }
-      .detail { font-size: 24px; }
-      .price-box { font-size: 32px; margin: 14px 0; }
-      .fundamentals td { font-size: 22px; padding: 8px 12px; }
-      h2 { font-size: 28px; margin-bottom: 12px; }
-      .meta { font-size: 22px; margin-top: 10px; }
-      iframe { width: 100%; height: 520px; }
+      body { font-size: 14px; line-height: 1.4; }
+      .title-left { font-size: 16px; }
+      .ticker { font-size: 14px; padding: 6px; }
+      .detail { font-size: 14px; }
+      .price-box { font-size: 16px; margin: 8px 0; }
+      .fundamentals td { font-size: 13px; padding: 4px 6px; }
+      h2 { font-size: 16px; margin-bottom: 8px; }
+      .meta { font-size: 13px; margin-top: 6px; }
+      iframe { width: 100%; height: 400px; }
     }
   </style>
 
@@ -127,32 +129,120 @@
   </div>
 
   <script>
-    const tickers = {
-      "IDX:BBCA": {
-        title:"Bank Central Asia Tbk PT",
-        price:6034, change:0.13, changeVal:8,
-        fundamentals:{
-          "Prev Close":"Rp5,900","Open":"Rp5,900","High":"Rp6,075","Low":"Rp5,875",
-          "Market Cap":"732.25T","Volume":"127.58M","Dividend":"5.58%","P/E Ratio":"12.78"
-        }
-      },
-      "IDX:BBRI": {
-        title:"Bank Rakyat Indonesia",
-        price:3152, change:3.62, changeVal:110,
-        fundamentals:{
-          "Prev Close":"Rp3,042","Open":"Rp3,050","High":"Rp3,180","Low":"Rp3,020",
-          "Market Cap":"600T","Volume":"120M","Dividend":"4.8%","P/E Ratio":"11.5"
-        }
-      },
-      "IDX:BMRI": {
-        title:"Bank Mandiri",
-        price:4490, change:-1.58, changeVal:-72,
-        fundamentals:{
-          "Prev Close":"Rp4,562","Open":"Rp4,570","High":"Rp4,600","Low":"Rp4,450",
-          "Market Cap":"700T","Volume":"95M","Dividend":"5.1%","P/E Ratio":"12.2"
-        }
-      }
-    };
+const tickers = {
+  "IDX:BBCA": {
+    title:"Bank Central Asia Tbk PT",
+    price:6034, change:0.13, changeVal:8,
+    fundamentals:{
+      "Prev Close":"Rp5,900","Open":"Rp5,900","High":"Rp6,075","Low":"Rp5,875",
+      "Market Cap":"732.25T","Volume":"127.58M","Dividend":"5.58%","P/E Ratio":"12.78"
+    }
+  },
+  "IDX:BBRI": {
+    title:"Bank Rakyat Indonesia",
+    price:3152, change:3.62, changeVal:110,
+    fundamentals:{
+      "Prev Close":"Rp3,042","Open":"Rp3,050","High":"Rp3,180","Low":"Rp3,020",
+      "Market Cap":"600T","Volume":"120M","Dividend":"4.8%","P/E Ratio":"11.5"
+    }
+  },
+  "IDX:BMRI": {
+    title:"Bank Mandiri",
+    price:4490, change:-1.58, changeVal:-72,
+    fundamentals:{
+      "Prev Close":"Rp4,562","Open":"Rp4,570","High":"Rp4,600","Low":"Rp4,450",
+      "Market Cap":"700T","Volume":"95M","Dividend":"5.1%","P/E Ratio":"12.2"
+    }
+  },
+  "IDX:BBNI": {
+    title:"Bank Negara Indonesia",
+    price:5050, change:0.85, changeVal:43,
+    fundamentals:{
+      "Prev Close":"Rp5,007","Open":"Rp5,020","High":"Rp5,080","Low":"Rp5,000",
+      "Market Cap":"300T","Volume":"80M","Dividend":"4.5%","P/E Ratio":"11.0"
+    }
+  },
+  "IDX:TLKM": {
+    title:"Telkom Indonesia",
+    price:4200, change:1.20, changeVal:50,
+    fundamentals:{
+      "Prev Close":"Rp4,150","Open":"Rp4,160","High":"Rp4,220","Low":"Rp4,140",
+      "Market Cap":"450T","Volume":"90M","Dividend":"3.9%","P/E Ratio":"13.2"
+    }
+  },
+  "IDX:ASII": {
+    title:"Astra International",
+    price:6200, change:-0.65, changeVal:-40,
+    fundamentals:{
+      "Prev Close":"Rp6,240","Open":"Rp6,250","High":"Rp6,280","Low":"Rp6,180",
+      "Market Cap":"350T","Volume":"70M","Dividend":"4.2%","P/E Ratio":"12.0"
+    }
+  },
+  "IDX:UNVR": {
+    title:"Unilever Indonesia",
+    price:4500, change:0.75, changeVal:34,
+    fundamentals:{
+      "Prev Close":"Rp4,466","Open":"Rp4,470","High":"Rp4,520","Low":"Rp4,450",
+      "Market Cap":"200T","Volume":"60M","Dividend":"5.0%","P/E Ratio":"14.5"
+    }
+  },
+  "IDX:ICBP": {
+    title:"Indofood CBP",
+    price:11000, change:1.10, changeVal:120,
+    fundamentals:{
+      "Prev Close":"Rp10,880","Open":"Rp10,900","High":"Rp11,050","Low":"Rp10,850",
+      "Market Cap":"180T","Volume":"50M","Dividend":"3.8%","P/E Ratio":"13.0"
+    }
+  },
+  "IDX:INDF": {
+    title:"Indofood Sukses Makmur",
+    price:7200, change:0.95, changeVal:68,
+    fundamentals:{
+      "Prev Close":"Rp7,132","Open":"Rp7,150","High":"Rp7,220","Low":"Rp7,100",
+      "Market Cap":"160T","Volume":"45M","Dividend":"4.0%","P/E Ratio":"12.5"
+    }
+  },
+  "IDX:PGAS": {
+    title:"Perusahaan Gas Negara",
+    price:1450, change:-0.55, changeVal:-8,
+    fundamentals:{
+      "Prev Close":"Rp1,458","Open":"Rp1,460","High":"Rp1,470","Low":"Rp1,440",
+      "Market Cap":"70T","Volume":"40M","Dividend":"3.5%","P/E Ratio":"10.8"
+    }
+  },
+  "IDX:PTBA": {
+    title:"Bukit Asam",
+    price:2800, change:1.25, changeVal:35,
+    fundamentals:{
+      "Prev Close":"Rp2,765","Open":"Rp2,770","High":"Rp2,820","Low":"Rp2,760",
+      "Market Cap":"90T","Volume":"38M","Dividend":"6.0%","P/E Ratio":"9.5"
+    }
+  },
+  "IDX:ADRO": {
+    title:"Adaro Energy",
+    price:3100, change:-0.75, changeVal:-23,
+    fundamentals:{
+      "Prev Close":"Rp3,123","Open":"Rp3,130","High":"Rp3,150","Low":"Rp3,100",
+      "Market Cap":"100T","Volume":"42M","Dividend":"5.2%","P/E Ratio":"10.2"
+    }
+  },
+  "IDX:GGRM": {
+    title:"Gudang Garam",
+    price:19500, change:0.45, changeVal:88,
+    fundamentals:{
+      "Prev Close":"Rp19,412","Open":"Rp19,420","High":"Rp19,550","Low":"Rp19,400",
+      "Market Cap":"120T","Volume":"25M","Dividend":"4.7%","P/E Ratio":"11.8"
+    }
+  },
+  "IDX:HMSP": {
+    title:"HM Sampoerna",
+    price:950, change:0.65, changeVal:6,
+    fundamentals:{
+      "Prev Close":"Rp944","Open":"Rp945","High":"Rp960","Low":"Rp940",
+      "Market Cap":"85T","Volume":"30M","Dividend":"5.5%","P/E Ratio":"10.0"
+    }
+  }
+};
 
     function formatTime(date){
       return date.toLocaleString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+" WIB";
